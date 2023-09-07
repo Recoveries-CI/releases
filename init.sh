@@ -16,4 +16,8 @@ git config --global user.name "${GITHUB_USER}"
 mkdir -p "${ROM_DIR}"
 cd "${ROM_DIR}"
 
-source "${my_dir}"/sync.sh
+if [ "${sync}" == "true" ]; then
+  source "${my_dir}/sync.sh"
+else
+  source "${my_dir}/build.sh"
+fi  

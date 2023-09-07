@@ -4,7 +4,7 @@ export outdir="${ROM_DIR}/out/target/product/${device}"
 BUILD_START=$(date +"%s")
 echo "Build started for ${device}"
 if [ "${jenkins}" == "true" ]; then
-    telegram -M "Build ${BUILD_DISPLAY_NAME} started for ${device}: [See Progress](${BUILD_URL}console)"
+    telegram -M "Build ${ROM} started for ${device}: [See Progress](${BUILD_URL}console)"
 else
     telegram -M "Build started for ${device}"
 fi
@@ -20,14 +20,17 @@ fi
 export ALLOW_MISSING_DEPENDENCIES=true
 export LC_ALL=C
 lunch "${rom_vendor_name}_${device}-eng"
-m clean -j$(nproc --all)
+m clean && m clobber -j$(nproc --all)
 m recoveryimage -j$(nproc --all)
 buildsuccessful="${?}"
 BUILD_END=$(date +"%s")
 BUILD_DIFF=$((BUILD_END - BUILD_START))
 
+#Get Version info stored in variables.h
+TW_MAIN_VERSION=$(sed -n -e 's/^.*#define TW_MAIN_VERSION_STR //p' bootable/recovery/variables.h | cut -d'"' -f2)
+
 export img_path=$(ls "${outdir}"/recovery.img | tail -n -1)
-export tag="twrp-${device}-$(date +%m%d%Y-%H%M)"
+export tag="twrp-${TW_MAIN_VERSION}-${TW_DEVICE_VERSION}-${device}"
 if [ "${buildsuccessful}" == "0" ] && [ -e "${img_path}" ]; then
     echo "Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds"
 
@@ -35,7 +38,7 @@ if [ "${buildsuccessful}" == "0" ] && [ -e "${img_path}" ]; then
 
     echo "Uploading"
 
-    github-release "${release_repo}" "${tag}" "master" "${ROM} for ${device}
+    github-release "${release_repo}" "${tag}" "${release_branch}" "${ROM} for ${device}
 
 Date: $(env TZ="${timezone}" date)" "${outdir}/${tag}.img"
 
