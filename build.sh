@@ -20,30 +20,28 @@ fi
 export ALLOW_MISSING_DEPENDENCIES=true
 export LC_ALL=C
 lunch "${rom_vendor_name}_${device}-eng"
-m clean -j$(nproc --all)
-m recoveryimage -j$(nproc --all)
+m clean && m clobber -j$(nproc --all)
+m pbrp -j$(nproc --all)
 buildsuccessful="${?}"
 BUILD_END=$(date +"%s")
 BUILD_DIFF=$((BUILD_END - BUILD_START))
 
-export img_path=$(ls "${outdir}"/recovery.img | tail -n -1)
-export tag="twrp-${device}-$(date +%m%d%Y-%H%M)"
-if [ "${buildsuccessful}" == "0" ] && [ -e "${img_path}" ]; then
+export zip_path=$(ls "${outdir}"/*.zip | tail -n -1)
+export zip_name=$(echo "${zip_path}" | sed "s|${outdir}/||")
+if [ "${buildsuccessful}" == "0" ] && [ -e "${zip_path}" ]; then
     echo "Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds"
-
-    cp "${img_path}" "${outdir}/${tag}.img"
 
     echo "Uploading"
 
-    github-release "${release_repo}" "${tag}" "master" "${ROM} for ${device}
+    github-release "${release_repo}" "${zip_name}" "${release_branch}" "${ROM} for ${device}
 
-Date: $(env TZ="${timezone}" date)" "${outdir}/${tag}.img"
+Date: $(env TZ="${timezone}" date)" "${outdir}/${zip_name}"
 
     echo "Uploaded"
 
     telegram -M "Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
 
-Download: ["${tag}.img"]("https://github.com/${release_repo}/releases/download/${tag}/${tag}.img")"
+Download: ["${zip_name}"]("https://github.com/${release_repo}/releases/download/${zip_name}/${zip_name}")"
 curl --data parse_mode=HTML --data chat_id=$TELEGRAM_CHAT --data sticker=CAADBQADGgEAAixuhBPbSa3YLUZ8DBYE --request POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendSticker
 
 else
