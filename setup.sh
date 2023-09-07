@@ -4,7 +4,7 @@ export my_dir=$(pwd)
 
 cd
 echo "Downloading dependencies..."
-git clone https://github.com/akhilnarang/scripts --depth 1
+git clone https://github.com/faoliveira78/scripts --depth 1
 cd scripts
 echo "Installing dependencies..."
 source setup/android_build_env.sh
