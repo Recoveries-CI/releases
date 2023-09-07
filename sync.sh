@@ -14,8 +14,21 @@ cores=$(nproc --all)
 if [ "${cores}" -gt "8" ]; then
     cores=8
 fi
+repo forall -c 'git reset --hard ; git clean -fdx'
 repo sync --force-sync --fail-fast --no-tags --no-clone-bundle --optimized-fetch --prune "-j${cores}" -c -v
 syncsuccessful="${?}"
+
+# Cherry-pick gerrit patches
+if [ "$branch" = "twrp-12.1" ]; then
+#  if [[ "$local_manifest_url" == *"cheesedump"* ]]; then
+#    git -C device/oneplus/cheeseburger_dumpling fetch https://gerrit.twrp.me/android_device_oneplus_cheeseburger_dumpling refs/changes/72/6872/1 && git -C device/oneplus/cheeseburger_dumpling cherry-pick FETCH_HEAD 
+#  elif [[ "$local_manifest_url" == *"op5_t"* ]]; then
+#    source build/envsetup.sh
+#    repopick 5683
+#    repopick -t op5_t_0511 -P device/oneplus/cheeseburger_dumpling
+#  fi
+fi
+
 SYNC_END=$(date +"%s")
 SYNC_DIFF=$((SYNC_END - SYNC_START))
 if [ "${syncsuccessful}" == "0" ]; then

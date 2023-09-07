@@ -97,3 +97,5 @@ OR
 `release_repo` - your GitHub username + name of the repo to upload the releases (e.g. `JarlPenguin/releases`)
 
 `timezone` - your timezone (default: `UTC`)
+
+`sync`- `true`- if you want to sync repos, `false` if you don't
