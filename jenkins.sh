@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ ! -d "releases" ]; then
-    git clone https://github.com/JarlPenguin/releases.git
+    git clone https://github.com/Recoveries-CI/releases.git
 fi
 cd releases
 curl https://storage.googleapis.com/git-repo-downloads/repo > bin/repo
@@ -16,4 +16,4 @@ export GITHUB_TOKEN=""
 export TELEGRAM_TOKEN=""
 export TELEGRAM_CHAT=""
 export BUILD_NUMBER=""
-source init.sh
+source Dockerfile

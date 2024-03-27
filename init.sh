@@ -14,7 +14,7 @@ fi
 git config --global user.email "${GITHUB_EMAIL}"
 git config --global user.name "${GITHUB_USER}"
 
-mkdir -p "${ROM_DIR}"
-cd "${ROM_DIR}"
+mkdir -p "${WORK}"
+cd "${WORK}" || exit 1
 
-source "${my_dir}"/sync.sh
+source "${my_dir}"/build.sh
